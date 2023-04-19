@@ -1,1 +1,1 @@
-# sphinx-embeddings
+# sphinx-embeddings-builder

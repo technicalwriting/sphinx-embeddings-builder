@@ -5,7 +5,7 @@ def install_requires():
         return [line.strip() for line in f.readlines()]
 
 setup(
-    name='sphinx-embeddings',
+    name='sphinx-embeddings-builder',
     version='0.1',
     packages=find_packages(),
     install_requires=install_requires(),
