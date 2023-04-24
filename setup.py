@@ -12,4 +12,9 @@ setup(
     packages=find_packages(),
     install_requires=install_requires(),
     classifiers=[],
+    entry_points={
+        'sphinx.builders': [
+            'embeddings = sphinx-embeddings-builder'
+        ]
+    }
 )
