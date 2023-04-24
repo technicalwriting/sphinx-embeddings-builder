@@ -4,6 +4,9 @@ from hashlib import md5
 from tiktoken import get_encoding
 from sphinx.util.osutil import ensuredir
 from os import path
+from json import dump
+
+__version__ = '0.0.1'
 
 class EmbeddingsBuilder(Builder):
     name = 'embeddings'
@@ -11,11 +14,11 @@ class EmbeddingsBuilder(Builder):
     epilog = __('TODO')
 
     def init(self):
-        self['data'] = {}
+        self.data = {}
         # TODO: This should be a configurable value.
         # def count(text):
         #     return len(get_encoding('cl100k_base').encode(text))
-        # self['count_tokens'] = lambda text: count(text)
+        # self.count_tokens = lambda text: count(text)
 
     def get_outdated_docs(self):
         return self.env.all_docs
@@ -23,10 +26,14 @@ class EmbeddingsBuilder(Builder):
     def get_target_uri(self, docname, typ=None):
         return docname
 
+    def prepare_writing(self, docnames):
+        outdir = path.join(self.outdir, 'embeddings')
+        ensuredir(outdir)
+
     def write_doc(self, docname, doctree):
-        text = section.astext()
-        self['data'][docname] = {
-            # 'tokens': self['count_tokens'](text),
+        text = doctree.astext()
+        self.data[docname] = {
+            # 'tokens': self.count_tokens(text),
             'checksum': md5(text.encode('utf-8')).hexdigest()
         }
 
@@ -34,8 +41,15 @@ class EmbeddingsBuilder(Builder):
         outdir = path.join(self.outdir, 'embeddings')
         ensuredir(outdir)
         with open(path.join(outdir, 'embeddings.json'), 'w') as f:
-            json.dump(self['data'], f, indent=2)
-        
+            dump(self.data, f, indent=2)
+
+def setup(app):
+    app.add_builder(EmbeddingsBuilder)
+    return {
+        'version': __version__,
+        'parallel_read_safe': True,
+        'parallel_write_safe': True,
+    }
 
 
 # from docutils import nodes

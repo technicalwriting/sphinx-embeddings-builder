@@ -1,4 +1,4 @@
-working_directory=$(pwd)
+sphinx_embeddings_builder_directory=$(pwd)
 
 if [ ! -d ~/.venv ]; then
     mkdir ~/.venv
@@ -16,11 +16,10 @@ fi
 source ~/.venv/sphinx-embeddings-builder/bin/activate
 cd /tmp/sphinx
 python3 -m pip uninstall --yes sphinx-embeddings-builder
-python3 -m pip install sphinx-embeddings-builder
-python3 -m pip install -U sphinx-embeddings-builder
+python3 -m pip install $sphinx_embeddings_builder_directory
+python3 -m pip install -U $sphinx_embeddings_builder_directory
 python3 -m pip install -e .
-# TODO: Replace `html` with `embeddings`
 # https://www.sphinx-doc.org/en/master/man/sphinx-build.html#cmdoption-sphinx-build-E
-sphinx-build -M html ./doc ./build/sphinx -W --keep-going -E
+sphinx-build -M embeddings ./doc ./build/sphinx -W --keep-going -E
 deactivate
-cd $working_directory
+cd $sphinx_embeddings_builder_directory
