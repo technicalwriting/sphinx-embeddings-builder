@@ -5,6 +5,7 @@ from tiktoken import get_encoding
 from sphinx.util.osutil import ensuredir
 from os import path
 from json import dump
+from docutils.nodes import section as section_node
 
 __version__ = '0.0.1'
 
@@ -15,10 +16,9 @@ class EmbeddingsBuilder(Builder):
 
     def init(self):
         self.data = {}
+        self.dir = path.join(self.outdir, 'embeddings')
         # TODO: This should be a configurable value.
-        # def count(text):
-        #     return len(get_encoding('cl100k_base').encode(text))
-        # self.count_tokens = lambda text: count(text)
+        self.count_tokens = lambda text: len(get_encoding('cl100k_base').encode(text))
 
     def get_outdated_docs(self):
         return self.env.all_docs
@@ -27,20 +27,28 @@ class EmbeddingsBuilder(Builder):
         return docname
 
     def prepare_writing(self, docnames):
-        outdir = path.join(self.outdir, 'embeddings')
-        ensuredir(outdir)
+        ensuredir(self.dir)
 
     def write_doc(self, docname, doctree):
-        text = doctree.astext()
-        self.data[docname] = {
-            # 'tokens': self.count_tokens(text),
-            'checksum': md5(text.encode('utf-8')).hexdigest()
-        }
+        self.data[docname] = {}
+        for section in doctree.traverse(section_node):
+            text = section.astext()
+            # Checksum should be generated before any modifications are made to the section.
+            checksum = md5(text.encode('utf-8')).hexdigest()
+            tokens = self.count_tokens(text)
+            # TODO: Add a config value for maximum token threshold and skip any sections that
+            # are larger than the threshold.
+            self.data[docname][checksum] = {
+                'tokens': self.count_tokens(text)
+            }
+        # self.data[docname] = {
+        #     # 'tokens': self.count_tokens(text),
+        #     'checksum': md5(text.encode('utf-8')).hexdigest()
+        # }
 
     def finish(self):
-        outdir = path.join(self.outdir, 'embeddings')
-        ensuredir(outdir)
-        with open(path.join(outdir, 'embeddings.json'), 'w') as f:
+        data_path = path.join(self.dir, 'embeddings.json')
+        with open(data_path, 'w') as f:
             dump(self.data, f, indent=2)
 
 def setup(app):
