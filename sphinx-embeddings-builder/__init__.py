@@ -20,7 +20,7 @@ class EmbeddingsBuilder(Builder):
         self.data = {}
         # TODO: This should be a configurable value.
         self.count_tokens = lambda text: len(get_encoding('cl100k_base').encode(text))
-        openai.api_key = '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'
+        openai.api_key = 'TODO'
         # TODO: This should be a configurable value.
         def gen(text):
             model = 'text-embedding-ada-002'
