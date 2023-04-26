@@ -20,6 +20,6 @@ python3 -m pip install $sphinx_embeddings_builder_directory
 python3 -m pip install -U $sphinx_embeddings_builder_directory
 python3 -m pip install -e .
 # https://www.sphinx-doc.org/en/master/man/sphinx-build.html#cmdoption-sphinx-build-E
-sphinx-build -M embeddings ./doc ./build/sphinx -W --keep-going -E
+time sphinx-build -M embeddings ./doc ./build/sphinx -W --keep-going -E
 deactivate
 cd $sphinx_embeddings_builder_directory
