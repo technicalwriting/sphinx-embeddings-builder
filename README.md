@@ -1,5 +1,12 @@
 # sphinx-embeddings-builder
 
+## Notes
+
+* Embedding stats for https://sphinx-doc.org
+  * Complete generation took 3m17s
+  * Ignored sections with token size greater than 8191 (since text-embedding-ada-002 can't handle more than that)
+  * `embeddings.json` file is ~43MB
+
 ## Features
 
 * Configurable token limits
