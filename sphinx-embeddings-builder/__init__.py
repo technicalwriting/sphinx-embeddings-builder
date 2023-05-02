@@ -4,7 +4,7 @@ from os import path
 from json import dump
 from docutils.nodes import section as section_node
 
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 
 class EmbeddingsBuilder(Builder):
     name = 'embeddings'
@@ -32,6 +32,8 @@ class EmbeddingsBuilder(Builder):
             # Checksum should be generated before any modifications are made to the section.
             checksum = md5(text.encode('utf-8')).hexdigest()
             tokens = self.count(text)
+            if tokens is None:
+                continue
             if tokens > self.max_tokens:
                 continue
             self.data[docname][checksum] = {
