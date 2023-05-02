@@ -12,7 +12,7 @@ pip install sphinx-embeddings-builder
 
 Update `conf.py` in your Sphinx project:
 
-```
+```py
 extensions = [
     # ...
     'sphinx-embeddings-builder
@@ -30,7 +30,7 @@ to set them up with different generative AI services.
 
 ### Google
 
-```
+```py
 import google.generativeai as palm
 
 # ...
@@ -75,7 +75,7 @@ sphinx_embeddings_builder_generate_embedding = gen
 
 ### OpenAI
 
-```
+```py
 from tiktoken import get_encoding
 from openai import key as openai_key, Embedding
 
