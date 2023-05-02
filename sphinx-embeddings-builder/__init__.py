@@ -7,6 +7,7 @@ from os import path
 from json import dump
 from docutils.nodes import section as section_node
 import openai
+from sphinx.util import logging
 
 __version__ = '0.0.1'
 
@@ -16,6 +17,17 @@ class EmbeddingsBuilder(Builder):
 
     def init(self):
         self.data = {}
+        config = dir(self.config)
+        logger = logging.getLogger(__name__)
+        required_config_vars = [
+            'sphinx_embeddings_builder_max_tokens',
+            'sphinx_embeddings_builder_count_tokens',
+            'sphinx_embeddings_builder_generate_embedding'
+        ]
+        for required_config_var in required_config_vars:
+            if config[required_config_var] is None:
+                logger.error('Missing required configuration variable: {}'.format(required_config_var))
+                raise RuntimeError(required_config_var)
         self.count = self.config.sphinx_embeddings_builder_count_tokens
         # self.count = lambda text: 5
         self.generate = self.config.sphinx_embeddings_builder_generate_embedding
@@ -57,6 +69,7 @@ class EmbeddingsBuilder(Builder):
             dump(self.data, f, indent=2)
 
 def setup(app):
+    logging.stderr = True
     app.add_builder(EmbeddingsBuilder)
     # Defaults to max token size for text-embedding-ada-002
     # https://platform.openai.com/docs/guides/embeddings/embedding-models

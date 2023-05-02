@@ -6,7 +6,7 @@ def install_requires():
 
 setup(
     name='sphinx-embeddings-builder',
-    version='0.1',
+    version='0.0.3',
     packages=find_packages(),
     install_requires=install_requires(),
     classifiers=[],
