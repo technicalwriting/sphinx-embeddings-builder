@@ -55,13 +55,19 @@ palm.configure(api_key=palm_api_key, client_options=palm_client_options)
 sphinx_embeddings_builder_max_tokens = 1024 # embedding-gecko-001's limit
 
 def count(text):
-    response = palm.count_message_tokens(text)
-    return response['token_count']
+    try:
+        response = palm.count_message_tokens(prompt=text)
+        return response['token_count']
+    except Exception as e:
+        return None
 sphinx_embeddings_builder_count_tokens = count
 
 def gen(text):
-    response = palm.generate_embeddings(model=palm_model, text=text)
-    return response['embedding']
+    try:
+        response = palm.generate_embeddings(model=palm_model, text=text)
+        return response['embedding']
+    except Exception as e:
+        return None
 sphinx_embeddings_builder_generate_embedding = gen
 
 # ...
