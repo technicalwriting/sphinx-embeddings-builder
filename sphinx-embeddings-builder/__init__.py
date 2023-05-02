@@ -16,10 +16,10 @@ class EmbeddingsBuilder(Builder):
 
     def init(self):
         self.data = {}
-        # self.count = self.config.sphinx_embeddings_builder_count_tokens
-        self.count = lambda text: 5
-        self.generate = lambda text: [1, 2, 3, 4, 5]
-        self.max_tokens = 100
+        self.count = self.config.sphinx_embeddings_builder_count_tokens
+        # self.count = lambda text: 5
+        self.generate = self.config.sphinx_embeddings_builder_generate_embedding
+        self.max_tokens = self.config.sphinx_embeddings_builder_max_tokens
         # openai.api_key = 'TODO'
         # def gen(text):
         #     model = 'text-embedding-ada-002'
@@ -63,7 +63,9 @@ def setup(app):
     # max_tokens = 8191
     # app.add_config_value('sphinx_embeddings_builder_max_tokens', max_tokens, 'env')
     # count_tokens = lambda text: len(get_encoding('cl100k_base').encode(text))
-    # app.add_config_value('sphinx_embeddings_builder_count_tokens', count_tokens, 'env')
+    app.add_config_value('sphinx_embeddings_builder_count_tokens', None, 'env')
+    app.add_config_value('sphinx_embeddings_builder_max_tokens', None, 'env')
+    app.add_config_value('sphinx_embeddings_builder_generate_embedding', None, 'env')
     # generate_embedding = lambda text: [1, 2, 3, 4, 5]
     # app.add_config_value('sphinx_embeddings_builder_generate_embedding', generate_embedding, 'env')
     return {
