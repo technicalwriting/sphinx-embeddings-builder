@@ -2,3 +2,5 @@ venv
 build
 dist
 sphinx_embeddings_builder.egg-info
+key.txt
+*.swp
