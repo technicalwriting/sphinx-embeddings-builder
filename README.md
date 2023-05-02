@@ -18,13 +18,54 @@ extensions = [
     'sphinx-embeddings-builder
 ]
 
-# All config values are required.
 sphinx_embeddings_builder_max_tokens = my_max_token_size
 sphinx_embeddings_builder_count_tokens = my_token_counting_function
 sphinx_embeddings_builder_generate_embedding = my_embedding_generation_function
 ```
 
-## Examples
+**All of the configuration variables are required.** See [Examples] to learn how
+to set them up with different generative AI services.
+
+<h2 id="examples">Examples</h2>
+
+### Google
+
+```
+import google.generativeai as palm
+
+# ...
+
+extensions = [
+    # ...
+    'sphinx-embeddings-builder'
+]
+
+# ...
+
+palm_api_endpoint = '...'
+palm_model = 'models/embedding-gecko-001'
+palm_api_key = '...' # Load from a secure environment variable. 
+                     # Don't leak your key!
+palm_client_options = {
+    'api_endpoint': palm_api_endpoint
+}
+
+palm.configure(api_key=palm_api_key, client_options=palm_client_options)
+
+sphinx_embeddings_builder_max_tokens = 1024 # embedding-gecko-001's limit
+
+def count(text):
+    response = palm.count_message_tokens(text)
+    return response['token_count']
+sphinx_embeddings_builder_count_tokens = count
+
+def gen(text):
+    response = palm.generate_embeddings(model=palm_model, text=text)
+    return response['embedding']
+sphinx_embeddings_builder_generate_embedding = gen
+
+# ...
+```
 
 ### OpenAI
 
@@ -41,30 +82,24 @@ extensions = [
 
 # ...
 
+openai_key = '...' # Load from a secure environment variable.
+                   # Don't leak your key!
+
 sphinx_embeddings_builder_max_tokens = 8191
+
 sphinx_embeddings_builder_count_tokens = lambda text: len(get_encoding('cl100k_base').encode(text))
+
 def gen(text):
-    openai_key = '...'
     response = Embedding.create(input=text, model='text-embedding-ada-002')
-    return data['data'][0]['embedding']
+    return response['data'][0]['embedding']
 sphinx_embeddings_builder_generate_embedding = gen
+
+# ...
 ```
-
-
-## Notes
-
-* Embedding stats for https://sphinx-doc.org
-  * Complete generation took 3m17s
-  * Ignored sections with token size greater than 8191 (since text-embedding-ada-002 can't handle more than that)
-  * `embeddings.json` file is ~43MB
-
-## Features
-
-* Configurable token limits
 
 ## Architecture
 
-### Data "schema"
+### Data schema
 
 ```
 {
@@ -118,3 +153,4 @@ have the `section2` content "in them".
 
 [Sphinx Builder]: https://www.sphinx-doc.org/en/master/usage/builders/index.html
 [embeddings]: https://en.wikipedia.org/wiki/Word_embedding
+[Examples]: #examples
