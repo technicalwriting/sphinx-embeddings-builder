@@ -1,14 +1,10 @@
 from sphinx.builders import Builder
-from sphinx.locale import __
 from hashlib import md5
-from tiktoken import get_encoding
-from sphinx.util.osutil import ensuredir
 from os import path
 from json import dump
 from docutils.nodes import section as section_node
-import openai
 
-__version__ = '0.0.4'
+__version__ = '0.0.5'
 
 class EmbeddingsBuilder(Builder):
     name = 'embeddings'
@@ -50,7 +46,6 @@ class EmbeddingsBuilder(Builder):
             dump(self.data, f, indent=2)
 
 def setup(app):
-    logging.stderr = True
     app.add_builder(EmbeddingsBuilder)
     app.add_config_value('sphinx_embeddings_builder_count_tokens', None, 'env')
     app.add_config_value('sphinx_embeddings_builder_max_tokens', None, 'env')
