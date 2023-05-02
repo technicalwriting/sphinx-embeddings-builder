@@ -16,11 +16,16 @@ fi
 
 echo "setting up $dir"
 sphinx-quickstart --project=$name --author=$name --quiet $dir
-echo "import os" >> $conf
-echo "import sys" >> $conf
-echo "sys.path.append(os.path.abspath('./ext'))" >> $conf
-echo "extensions = ['sphinx-embeddings-builder']" >> $conf
-echo "exclude_patterns = ['ext/venv']" >> $conf
+hacks='import os
+import sys
+from tiktoken import get_encoding
+sys.path.append(os.path.abspath("./ext"))
+extensions = ["sphinx-embeddings-builder"]
+exclude_patterns = ["ext/venv"]
+sphinx_embeddings_builder_count_tokens = lambda text: len(get_encoding("cl100k_base").encode(text))
+sphinx_embeddings_builder_generate_embedding = lambda text: [3, 0, 9]
+sphinx_embeddings_builder_max_tokens = 100'
+echo "$hacks" >> $conf
 
 mkdir $dir/ext
 cd ..
